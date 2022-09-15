@@ -16,7 +16,6 @@ public class Protagonist : MonoBehaviour
     private void MovementHandle(Vector2 direction)
     {
         _navigation.Direction = new Vector3(direction.x,0,direction.y);
-        
     }
     // private void RecalculateMovement()
     // {

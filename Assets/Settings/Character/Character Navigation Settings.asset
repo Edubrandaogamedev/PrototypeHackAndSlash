@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9fbc05ed79d5da4e82eae07e30b2e6e, type: 3}
   m_Name: Character Navigation Settings
   m_EditorClassIdentifier: 
-  positionScaler: 5
-  navigationSpeed: 10
+  positionScaler: 10
+  navigationSpeed: 500
+  rotationSpeed: 9000
+  navigationAcceleration: 400
   movementThreshold: 0.1
