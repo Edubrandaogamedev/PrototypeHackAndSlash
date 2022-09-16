@@ -6,42 +6,71 @@ using UnityEngine.AI;
 
 public class CharacterNavigation : MonoBehaviour
 {
-    [SerializeField] private CharacterNavigationSettings _settings;
-    
-    private float positionScaler = 3f;
+    [SerializeField] private CharacterMovementSettings _movementSettings;
+
+    [SerializeField] private NavAgentSettingsOverride _agentSettings;
+
+    private bool usePhysics;
     private float movementThreshold = 0.1f;
     
     private NavMeshAgent _navMeshAgent;
     private CharacterAnimation _animation;
-    public Vector3 Direction { get; set; }
+    public Vector3 InputValue { get; set; }
+    private float speed = 1f;
+    
     private void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _animation = GetComponent<CharacterAnimation>();
-        SetSettings();
+        Setup();
     }
     private void Update()
     {
-        Move();
-    }
-    private void Move()
-    {
-        if (Direction.magnitude <= movementThreshold)
+        if (InputValue.magnitude <= movementThreshold)
         {
-            _animation?.SetSpeed(0);
-            return;
+            UpdateAnimation(0);
         }
-        var destination = transform.position + Direction * Time.deltaTime * positionScaler;
-        _navMeshAgent.destination = (destination);
-        _animation?.SetSpeed(Direction.magnitude);
-
+        else
+        {
+            if (usePhysics)
+            {
+                _navMeshAgent.SetDestination(GetDestination());
+            }
+            else
+            {
+                transform.position = GetDestination();
+                RotateTowardsDirection();
+            }
+            UpdateAnimation(InputValue.magnitude);
+        }
     }
-    private void SetSettings()
+    private Vector3 GetDestination()
     {
-        positionScaler = _settings.PositionScaler;
-        movementThreshold = _settings.MovementThreshold;
-        _navMeshAgent.speed = _settings.NavigationSpeed;
-        _navMeshAgent.angularSpeed = _settings.RotationSpeed;
-        _navMeshAgent.acceleration = _settings.Acceleration;
+        var destination = transform.position + InputValue * Time.deltaTime * speed;
+        NavMeshHit hit;
+        return NavMesh.SamplePosition(destination, out hit, .3f, NavMesh.AllAreas) ? hit.position : transform.position;
+    }
+
+    private void RotateTowardsDirection()
+    {
+        var angle = 90 - Mathf.Atan2(InputValue.z, InputValue.x) * Mathf.Rad2Deg;
+        var euler = Quaternion.Euler(transform.localEulerAngles);
+        var newRot = Quaternion.Euler(euler.x, angle, euler.z);
+        transform.localRotation = newRot;
+    }
+
+    private void UpdateAnimation(float speed)
+    {
+        if (_animation == null) return;
+        _animation.SetSpeed(speed);
+    }
+    private void Setup()
+    {
+        usePhysics = _movementSettings.UsePhysics;
+        movementThreshold = _movementSettings.ControllerInputThreshold;
+        speed = _movementSettings.Speed;
+        _navMeshAgent.speed = _agentSettings.Speed;
+        _navMeshAgent.angularSpeed = _agentSettings.AngularSpeed;
+        _navMeshAgent.acceleration = _agentSettings.Acceleration;
     }
 }
