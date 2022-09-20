@@ -8,14 +8,22 @@ public class Protagonist : MonoBehaviour
     [SerializeField] private InputReader _inputReader;
     
     private CharacterNavigation _navigation;
+    private CharacterAttack _attack;
     private void Awake()
     {
         _navigation = GetComponent<CharacterNavigation>();
-        _inputReader.MoveEvent += MovementHandle;
+        _attack = GetComponent<CharacterAttack>();
+        _inputReader.MoveEvent += MovementHandler;
+        _inputReader.AttackEvent += AttackHandler;
     }
-    private void MovementHandle(Vector2 direction)
+    private void MovementHandler(Vector2 direction)
     {
-        _navigation.Direction = new Vector3(direction.x,0,direction.y);
+        _navigation.InputValue = new Vector3(direction.x,0,direction.y);
+    }
+
+    private void AttackHandler()
+    {
+        _attack.TryAttack();
     }
     // private void RecalculateMovement()
     // {

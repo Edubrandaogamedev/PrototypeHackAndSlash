@@ -9,6 +9,7 @@ public class InputReader : ScriptableObject, GameInput.IGameplayActions
 {
     private GameInput _gameInput;
     public event Action<Vector2> MoveEvent = delegate { };
+    public event Action AttackEvent = delegate { };
     private void OnEnable()
     {
         if (_gameInput == null)
@@ -24,6 +25,13 @@ public class InputReader : ScriptableObject, GameInput.IGameplayActions
     {
         MoveEvent(context.ReadValue<Vector2>());
     }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            AttackEvent();
+    }
+
     public void EnableDialogueInput()
     {
         //_gameInput.Dialogues.Enable();
