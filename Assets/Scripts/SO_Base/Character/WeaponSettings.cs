@@ -14,10 +14,9 @@ public struct SequenceData
     [SerializeField] private int attackDamage;
     [SerializeField] private float attackRange;
     [Tooltip("Set the multiplier to speed up the animation")]
-    [Min(0)][SerializeField] private float animationMultiplier;
+    [Min(1)][SerializeField] private float animationMultiplier;
     [Tooltip("Set the time space to move to next combo")]
     [Min(0)][SerializeField] private float timeToTriggerNextSequence;
-
     public int AttackDamage => attackDamage;
 
     public float AttackRange => attackRange;

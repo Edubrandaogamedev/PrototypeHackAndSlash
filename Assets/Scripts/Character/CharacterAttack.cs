@@ -23,16 +23,14 @@ public class CharacterAttack : MonoBehaviour
     }
     private void UpdateAnimation(bool triggerAttack)
     {
-        if (triggerAttack)
-            characterAnim.TriggerAttack();
+        // if (triggerAttack)
+        //     characterAnim.TriggerAttack();
         characterAnim.SetCombo(currentComboId,currentSequence.AnimationMultiplier);
     }
     public void TryAttack()
     {
         if (canStartComboAttack && _checkingComboCO == null)
-        {
             StartNextSequence(true);
-        }
         else
             inputBuffered = true;
     }
@@ -44,32 +42,29 @@ public class CharacterAttack : MonoBehaviour
         UpdateAnimation(isFirstSequence);
         _checkingComboCO = StartCoroutine(CheckingNextSequence());
     }
-
-    private void EndSequence()
-    {
-        isOnCombo = false;
-        currentComboId = 0;
-        currentSequence = default;
-        UpdateAnimation(false);
-    }
     private IEnumerator CheckingNextSequence()
     {
+        inputBuffered = false;
         var timeUntilNextSequence = currentSequence.TimeToTriggerNextSequence/ currentSequence.AnimationMultiplier;
         yield return new WaitForSeconds(timeUntilNextSequence);
         var comboLength = _weaponSettings.ComboSequence.Length;
         var timeRemaning = characterAnim.GetCurrentAnimationLength() - timeUntilNextSequence;
         if (inputBuffered && currentComboId < comboLength)
-        {
             StartNextSequence();
-        }
         else
-        {
-            EndSequence();
-            yield return new WaitForSeconds(timeRemaning);
-        }
-        inputBuffered = false;
-        _checkingComboCO = null;
+            StartCoroutine(EndingSequence(timeRemaning));
     }
 
+    private IEnumerator EndingSequence(float animTimeRemaining)
+    {
+        currentComboId = 0;
+        UpdateAnimation(false);
+        yield return new WaitForSeconds(animTimeRemaining);
+        currentSequence = default;
+        inputBuffered = false;
+        isOnCombo = false;
+        _checkingComboCO = null;
+
+    }
     
 }
