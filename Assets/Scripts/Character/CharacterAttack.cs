@@ -21,26 +21,34 @@ public class CharacterAttack : MonoBehaviour
     {
         characterAnim = GetComponent<CharacterAnimation>();
     }
-    private void UpdateAnimation(bool triggerAttack)
+    private void UpdateAnimation()
     {
-        // if (triggerAttack)
-        //     characterAnim.TriggerAttack();
-        characterAnim.SetCombo(currentComboId,currentSequence.AnimationMultiplier);
+        characterAnim.SetComboAttack(currentComboId,currentSequence.AnimationMultiplier);
     }
     public void TryAttack()
     {
         if (canStartComboAttack && _checkingComboCO == null)
-            StartNextSequence(true);
+            StartNextSequence();
         else
             inputBuffered = true;
     }
-    private void StartNextSequence(bool isFirstSequence = false)
+    private void StartNextSequence()
     {
         isOnCombo = true;
         currentComboId++;
         currentSequence = _weaponSettings.ComboSequence[currentComboId - 1];
-        UpdateAnimation(isFirstSequence);
+        UpdateAnimation();
         _checkingComboCO = StartCoroutine(CheckingNextSequence());
+    }
+    private IEnumerator EndingSequence(float animTimeRemaining)
+    {
+        currentComboId = 0;
+        UpdateAnimation();
+        yield return new WaitForSeconds(animTimeRemaining);
+        currentSequence = default;
+        inputBuffered = false;
+        isOnCombo = false;
+        _checkingComboCO = null;
     }
     private IEnumerator CheckingNextSequence()
     {
@@ -54,17 +62,4 @@ public class CharacterAttack : MonoBehaviour
         else
             StartCoroutine(EndingSequence(timeRemaning));
     }
-
-    private IEnumerator EndingSequence(float animTimeRemaining)
-    {
-        currentComboId = 0;
-        UpdateAnimation(false);
-        yield return new WaitForSeconds(animTimeRemaining);
-        currentSequence = default;
-        inputBuffered = false;
-        isOnCombo = false;
-        _checkingComboCO = null;
-
-    }
-    
 }

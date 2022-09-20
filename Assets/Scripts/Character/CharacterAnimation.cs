@@ -20,12 +20,7 @@ public class CharacterAnimation : MonoBehaviour
     {
         _animator.SetFloat(Speed,movementSpeed);    
     }
-    public void TriggerAttack()
-    {
-        _animator.SetTrigger(Attack);
-    }
-
-    public void SetCombo(int currentSequence, float animSpeed)
+    public void SetComboAttack(int currentSequence, float animSpeed)
     {
         _animator.SetFloat(ComboSpeed,animSpeed);
         _animator.SetInteger(ComboID,currentSequence);
