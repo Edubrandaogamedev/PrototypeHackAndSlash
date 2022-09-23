@@ -6,60 +6,65 @@ using UnityEngine;
 
 public class CharacterAttack : MonoBehaviour
 {
-    [SerializeField] private WeaponSettings _weaponSettings;
-
-    private CharacterAnimation characterAnim;
-    private SequenceData currentSequence;
-
-    private int currentComboId;
-    private bool isOnCombo;
-    private bool inputBuffered;
+    [SerializeField] private Weapon currentWeapon;
     
-    private Coroutine _checkingComboCO;
-    private bool canStartComboAttack => !isOnCombo;
+    private CharacterAnimation characterAnim;
+    private bool canStartComboAttack => !currentWeapon.IsOnCombo;
+    public event Action OnAttackStarted = delegate {};
+    public event Action OnAttackEnded = delegate {};
     private void Awake()
     {
         characterAnim = GetComponent<CharacterAnimation>();
+        SetupCurrentWeapon();
     }
-    private void UpdateAnimation()
+    private void UpdateAnimation(ComboSequenceData currentSquence)
     {
-        characterAnim.SetComboAttack(currentComboId,currentSequence.AnimationMultiplier);
+        characterAnim.SetComboAttack(currentWeapon.CurrentComboSequenceId,currentSquence.AnimationMultiplier);
     }
+
+    private void SetupCurrentWeapon()
+    {
+        currentWeapon.OnSequenceStarted += ComboSequenceChangeHandler;
+        currentWeapon.OnSequenceEnded += EndingComboHandler;
+    }
+    // private void RemoveCurrentWeapon()
+    // {
+    //     currentWeapon.OnSequenceStarted -= SequenceChangeHandler;
+    //     currentWeapon.OnSequenceEnded -= SequenceChangeHandler;
+    // }
     public void TryAttack()
     {
-        if (canStartComboAttack && _checkingComboCO == null)
-            StartNextSequence();
+        if (canStartComboAttack)
+            DoAttack();
         else
-            inputBuffered = true;
+        {
+            currentWeapon.TriggerNextSequence();
+        }
     }
-    private void StartNextSequence()
+    private void DoAttack()
     {
-        isOnCombo = true;
-        currentComboId++;
-        currentSequence = _weaponSettings.ComboSequence[currentComboId - 1];
-        UpdateAnimation();
-        _checkingComboCO = StartCoroutine(CheckingNextSequence());
+        OnAttackStarted();
+        currentWeapon.StartCombo();
     }
-    private IEnumerator EndingSequence(float animTimeRemaining)
+    private void EndAttack()
     {
-        currentComboId = 0;
-        UpdateAnimation();
-        yield return new WaitForSeconds(animTimeRemaining);
-        currentSequence = default;
-        inputBuffered = false;
-        isOnCombo = false;
-        _checkingComboCO = null;
+        currentWeapon.EndCombo();
+        OnAttackEnded();
     }
-    private IEnumerator CheckingNextSequence()
+    private void ComboSequenceChangeHandler(ComboSequenceData currentSquence)
     {
-        inputBuffered = false;
-        var timeUntilNextSequence = currentSequence.TimeToTriggerNextSequence/ currentSequence.AnimationMultiplier;
-        yield return new WaitForSeconds(timeUntilNextSequence);
-        var comboLength = _weaponSettings.ComboSequence.Length;
-        var timeRemaning = characterAnim.GetCurrentAnimationLength() - timeUntilNextSequence;
-        if (inputBuffered && currentComboId < comboLength)
-            StartNextSequence();
-        else
-            StartCoroutine(EndingSequence(timeRemaning));
+        UpdateAnimation(currentSquence);
+    }
+    private void EndingComboHandler(ComboSequenceData currentSquence)
+    {
+        UpdateAnimation(currentSquence);
+        StartCoroutine(WaitForSequenceAnimationEnd(currentSquence));
+    }
+    private IEnumerator WaitForSequenceAnimationEnd(ComboSequenceData sequence)
+    {
+        var elapsedTime = sequence.TimeToTriggerNextSequence/ sequence.AnimationMultiplier;
+        var timeRemaning = characterAnim.GetCurrentAnimationLength() - elapsedTime;
+        yield return new WaitForSeconds(timeRemaning);
+        EndAttack();
     }
 }

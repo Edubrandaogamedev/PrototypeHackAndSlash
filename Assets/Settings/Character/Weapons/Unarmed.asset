@@ -15,9 +15,13 @@ MonoBehaviour:
   comboSequence:
   - attackDamage: 1
     attackRange: 2
+    startImpactTime: 0.2
+    endImpactTime: 1
     animationMultiplier: 1
-    timeToTriggerNextSequence: 1.1
+    timeToTriggerNextSequence: 1.2
   - attackDamage: 1
     attackRange: 2
+    startImpactTime: 0
+    endImpactTime: 0
     animationMultiplier: 1
     timeToTriggerNextSequence: 1

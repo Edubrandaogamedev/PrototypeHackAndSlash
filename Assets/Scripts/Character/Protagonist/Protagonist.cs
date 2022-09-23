@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class Protagonist : MonoBehaviour
 {
@@ -9,21 +12,32 @@ public class Protagonist : MonoBehaviour
     
     private CharacterNavigation _navigation;
     private CharacterAttack _attack;
+    private bool canMove = true;
     private void Awake()
     {
         _navigation = GetComponent<CharacterNavigation>();
         _attack = GetComponent<CharacterAttack>();
         _inputReader.MoveEvent += MovementHandler;
         _inputReader.AttackEvent += AttackHandler;
+        _attack.OnAttackStarted += DisableMovement;
+        _attack.OnAttackEnded += EnableMovement;
     }
     private void MovementHandler(Vector2 direction)
     {
-        _navigation.InputValue = new Vector3(direction.x,0,direction.y);
+        _navigation.InputValue = canMove ? new Vector3(direction.x, 0, direction.y) : Vector3.zero;
     }
-
     private void AttackHandler()
     {
         _attack.TryAttack();
+    }
+    private void EnableMovement()
+    {
+        canMove = true;
+    }
+    private void DisableMovement()
+    {
+        canMove = false;
+        MovementHandler(Vector3.zero);
     }
     // private void RecalculateMovement()
     // {
