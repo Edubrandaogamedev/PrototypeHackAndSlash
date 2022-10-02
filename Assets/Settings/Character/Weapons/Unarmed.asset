@@ -18,7 +18,7 @@ MonoBehaviour:
     startImpactTime: 0.2
     endImpactTime: 1
     animationMultiplier: 1
-    timeToTriggerNextSequence: 1.2
+    timeToTriggerNextSequence: 1.1
     multipliesAttacks: 0
     isAOE: 0
   - attackDamage: 1
