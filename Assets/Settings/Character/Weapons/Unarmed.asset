@@ -19,9 +19,13 @@ MonoBehaviour:
     endImpactTime: 1
     animationMultiplier: 1
     timeToTriggerNextSequence: 1.2
+    multipliesAttacks: 0
+    isAOE: 0
   - attackDamage: 1
     attackRange: 2
     startImpactTime: 0
-    endImpactTime: 0
+    endImpactTime: 0.8
     animationMultiplier: 1
     timeToTriggerNextSequence: 1
+    multipliesAttacks: 0
+    isAOE: 0

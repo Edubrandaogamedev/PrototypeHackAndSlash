@@ -13,18 +13,24 @@ public class Protagonist : MonoBehaviour
     private CharacterNavigation _navigation;
     private CharacterAttack _attack;
     private bool canMove = true;
+    private Vector3 inputMovement;
     private void Awake()
     {
         _navigation = GetComponent<CharacterNavigation>();
         _attack = GetComponent<CharacterAttack>();
-        _inputReader.MoveEvent += MovementHandler;
+        _inputReader.MoveEvent += OnMove;
         _inputReader.AttackEvent += AttackHandler;
         _attack.OnAttackStarted += DisableMovement;
         _attack.OnAttackEnded += EnableMovement;
     }
-    private void MovementHandler(Vector2 direction)
+    private void OnMove(Vector2 direction)
     {
-        _navigation.InputValue = canMove ? new Vector3(direction.x, 0, direction.y) : Vector3.zero;
+        inputMovement = direction;
+        MovementHandler();
+    }
+    private void MovementHandler()
+    {
+        _navigation.InputValue = canMove ? new Vector3(inputMovement.x, 0, inputMovement.y) : Vector3.zero;
     }
     private void AttackHandler()
     {
@@ -33,11 +39,12 @@ public class Protagonist : MonoBehaviour
     private void EnableMovement()
     {
         canMove = true;
+        MovementHandler();
     }
     private void DisableMovement()
     {
         canMove = false;
-        MovementHandler(Vector3.zero);
+        MovementHandler();
     }
     // private void RecalculateMovement()
     // {

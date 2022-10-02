@@ -21,7 +21,6 @@ public class CharacterAttack : MonoBehaviour
     {
         characterAnim.SetComboAttack(currentWeapon.CurrentComboSequenceId,currentSquence.AnimationMultiplier);
     }
-
     private void SetupCurrentWeapon()
     {
         currentWeapon.OnSequenceStarted += ComboSequenceChangeHandler;
@@ -37,9 +36,7 @@ public class CharacterAttack : MonoBehaviour
         if (canStartComboAttack)
             DoAttack();
         else
-        {
             currentWeapon.TriggerNextSequence();
-        }
     }
     private void DoAttack()
     {
@@ -57,8 +54,10 @@ public class CharacterAttack : MonoBehaviour
     }
     private void EndingComboHandler(ComboSequenceData currentSquence)
     {
-        UpdateAnimation(currentSquence);
-        StartCoroutine(WaitForSequenceAnimationEnd(currentSquence));
+        //UpdateAnimation(currentSquence);
+        currentWeapon.EndCombo();
+        OnAttackEnded();
+        //StartCoroutine(WaitForSequenceAnimationEnd(currentSquence));
     }
     private IEnumerator WaitForSequenceAnimationEnd(ComboSequenceData sequence)
     {
