@@ -7,8 +7,10 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [SerializeField] private WeaponSettings data;
+
+    private float damage;
     
-    private Collider weaponCollider;
+    private WeaponImpact weaponCollider;
     
     private ComboSequenceData currentComboSequence;
     
@@ -18,12 +20,13 @@ public class Weapon : MonoBehaviour
     
     public event Action<ComboSequenceData> OnSequenceStarted;
     public event Action<ComboSequenceData> OnSequenceEnded;
-    
     public bool IsOnCombo { get; private set; }
     public int CurrentComboSequenceId => currentComboSequenceId;
+    public ComboSequenceData CurrentComboSequence => currentComboSequence;
     private void Awake()
     {
-        weaponCollider = GetComponentInChildren<Collider>();
+        weaponCollider = GetComponentInChildren<WeaponImpact>();
+        weaponCollider.OnHit += OnWeaponHit;
     }
     public void SetWeaponOnCorrectPosition(Vector3 position,Quaternion rotation)
     {
@@ -73,11 +76,12 @@ public class Weapon : MonoBehaviour
     private IEnumerator CheckingImpact()
     {
         yield return new WaitForSeconds(currentComboSequence.StartImpactTime);
-        EnableDamageCollider();
+        weaponCollider.EnableCollider();
         yield return new WaitForSeconds(currentComboSequence.EndImpactTime-currentComboSequence.StartImpactTime);
-        DisableDamageCollider();
+        weaponCollider.DisableCollider();
     }
-    private void EnableDamageCollider() => weaponCollider.enabled = true;
-
-    private void DisableDamageCollider() => weaponCollider.enabled = false;
+    private void OnWeaponHit(ITakeDamage damageableEntity)
+    {
+        damageableEntity.TakeDamage(this);
+    }
 }
