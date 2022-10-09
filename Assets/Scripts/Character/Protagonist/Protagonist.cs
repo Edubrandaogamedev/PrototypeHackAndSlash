@@ -9,7 +9,6 @@ using Vector3 = UnityEngine.Vector3;
 public class Protagonist : Character
 {
     [SerializeField] private InputReader _inputReader;
-    
     //private CharacterNavigation _navigation;
     private CharacterAttack _attack;
     private bool canMove = true;

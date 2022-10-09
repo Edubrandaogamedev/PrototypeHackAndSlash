@@ -7,28 +7,24 @@ using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "Movement Action", menuName = "Game/Character/Actions/MovementAction")]
 public class MovementActionSO : CharacterActionSO<MovementAction>
-{ 
+{
     public MovementActionAnimatorParameterSO animatorMovementParameterSO;
-    public CharacterMovementSettings movementSettings;
-    public NavAgentSettingsOverride agentSettings;
+    private void OnEnable()
+    {
+        actionKey = ActionKeys.MoveAction;
+    }
 }
 public class MovementAction : CharacterAction
 {
     private MovementActionSO actionSO => (MovementActionSO)base.ActionSO;
     private MovementActionAnimatorParameter animatorActionParameter => (MovementActionAnimatorParameter) actionSO.animatorMovementParameterSO.GetAnimParameter;
-    private Character character;
+    private CharacterMovementSettings actionSetting;
     private Vector3 inputValue;
-    public override void Initialize(Character originCharacter)
+    public override void Initialize(Character originCharacter, ActionSetting setting = null)
     {
         character = originCharacter;
+        actionSetting = (CharacterMovementSettings) setting;
         InitializeAnimations();
-        SettingsSetup();
-    }
-    private void SettingsSetup()
-    {
-        character.Agent.speed = actionSO.agentSettings.Speed;
-        character.Agent.angularSpeed = actionSO.agentSettings.AngularSpeed;
-        character.Agent.acceleration = actionSO.agentSettings.Acceleration;
     }
     private void InitializeAnimations()
     {
@@ -44,13 +40,13 @@ public class MovementAction : CharacterAction
 
     public override void OnUpdate()
     {
-        if (inputValue.magnitude <= actionSO.movementSettings.ControllerInputThreshold)
+        if (inputValue.magnitude <= actionSetting.ControllerInputThreshold)
         {
             animatorActionParameter.UpdateAnimator(0);
         }
         else
         {
-            if (actionSO.movementSettings.UsePhysics)
+            if (actionSetting.UsePhysics)
             {
                 character.Agent.SetDestination(GetDestination());
             }
@@ -68,7 +64,7 @@ public class MovementAction : CharacterAction
     }
     private Vector3 GetDestination()
     {
-        var destination = character.transform.position + inputValue * Time.deltaTime * actionSO.movementSettings.Speed;
+        var destination = character.transform.position + inputValue * Time.deltaTime * actionSetting.Speed;
         return NavMesh.SamplePosition(destination, out var hit, .3f, NavMesh.AllAreas) ? hit.position : character.transform.position;
     }
     private void RotateTowardsDirection()

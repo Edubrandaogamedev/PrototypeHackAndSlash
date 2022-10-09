@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[CreateAssetMenu(menuName = "Game/Settings/Character/Movement")]
-public class CharacterMovementSettings : ScriptableObject
+[CreateAssetMenu(menuName = "Game/Settings/Character/MovementActionSettings")]
+public class CharacterMovementSettings : ActionSetting
 {
     [SerializeField] private float movementSpeed = 1f;
     [SerializeField] private float controllerInputThreshold = 0.1f;

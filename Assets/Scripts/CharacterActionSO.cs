@@ -5,6 +5,11 @@ using UnityEngine;
 
 public abstract class CharacterActionSO : ScriptableObject
 {
+#if UNITY_EDITOR
+    [Header("Editor Use Only")]
+    public bool settingNeeded;
+#endif
+    [Space] [Header("Gameplay")]
     [SerializeField] protected ActionKeys actionKey;
     private CharacterAction action;
     public ActionKeys Key => actionKey;

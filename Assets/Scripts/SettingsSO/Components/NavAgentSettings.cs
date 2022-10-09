@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-[CreateAssetMenu(menuName = "Game/Settings/Components/NavMeshAgentOverride")]
-public class NavAgentSettingsOverride : ScriptableObject
+
+[CreateAssetMenu(fileName = "Agent Settings", menuName = "Game/Settings/Components/NavAgent")]
+public class NavAgentSettings : Settings
 {
     [SerializeField] private float speed = 3.5f;
     [SerializeField] private float angularSpeed = 120f;

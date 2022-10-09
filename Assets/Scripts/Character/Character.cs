@@ -6,10 +6,10 @@ using UnityEngine.AI;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] private List<CharacterActionSO> scriptableActions;
+    [SerializeField] private CharacterSettings settings;
     private Animator animator;
     private NavMeshAgent agent;
-    protected CharacterAction[] actions;
+    private CharacterAction[] actions;
     protected CharacterAction currentAction;
     
     public Animator Animator
@@ -30,18 +30,31 @@ public class Character : MonoBehaviour
             return agent;
         }
     }
+    private void SetupActions()
+    {
+        var count = settings.ScriptableActions.Length;
+        actions = new CharacterAction[count];
+        for (int i = 0; i < count; i++)
+        {
+            var scriptableAction = settings.ScriptableActions[i];
+            actions[i] = scriptableAction.GetAction;
+            actions[i].Initialize(this,settings.GetSettingForAction(scriptableAction));
+        }
+    }
+    private void SetupComponentsOverride()
+    {
+        Agent.speed = settings.AgentOverride.Speed;
+        Agent.angularSpeed = settings.AgentOverride.AngularSpeed;
+        Agent.acceleration = settings.AgentOverride.Acceleration;
+    }
     protected virtual void Awake()
     {
         SetupActions();
+        SetupComponentsOverride();
     }
-
     protected virtual void Update()
     {
         currentAction?.OnUpdate();
-    }
-    protected void UpdateAnimation()
-    {
-        
     }
     protected void SetCurrentAction(ActionKeys actionToSet)
     {
@@ -61,16 +74,6 @@ public class Character : MonoBehaviour
         foreach (var action in actions)
         {
             action.CancelAction();
-        }
-    }
-    private void SetupActions()
-    {
-        var count = scriptableActions.Count;
-        actions = new CharacterAction[count];
-        for (int i = 0; i < count; i++)
-        {
-            actions[i] = scriptableActions[i].GetAction;
-            actions[i].Initialize(this);
         }
     }
     private CharacterAction GetActionByKey(ActionKeys key)
