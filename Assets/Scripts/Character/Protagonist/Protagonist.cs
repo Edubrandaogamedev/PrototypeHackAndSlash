@@ -6,17 +6,19 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class Protagonist : MonoBehaviour
+public class Protagonist : Character
 {
     [SerializeField] private InputReader _inputReader;
     
-    private CharacterNavigation _navigation;
+    //private CharacterNavigation _navigation;
     private CharacterAttack _attack;
     private bool canMove = true;
     private Vector3 inputMovement;
-    private void Awake()
+
+    protected override void Awake()
     {
-        _navigation = GetComponent<CharacterNavigation>();
+        base.Awake();
+        // _navigation = GetComponent<CharacterNavigation>();
         _attack = GetComponent<CharacterAttack>();
         _inputReader.MoveEvent += OnMove;
         _inputReader.AttackEvent += AttackHandler;
@@ -25,12 +27,15 @@ public class Protagonist : MonoBehaviour
     }
     private void OnMove(Vector2 direction)
     {
-        inputMovement = direction;
-        MovementHandler();
+        inputMovement = new Vector3(direction.x, 0, direction.y);
+        SetCurrentAction(ActionKeys.MoveAction);
+        if (currentAction is MovementAction action) action.ModifyInputValue(inputMovement);  
+        ProcessAction();
+       // MovementHandler();
     }
     private void MovementHandler()
     {
-        _navigation.InputValue = canMove ? new Vector3(inputMovement.x, 0, inputMovement.y) : Vector3.zero;
+        //_navigation.InputValue = canMove ? new Vector3(inputMovement.x, 0, inputMovement.y) : Vector3.zero;
     }
     private void AttackHandler()
     {

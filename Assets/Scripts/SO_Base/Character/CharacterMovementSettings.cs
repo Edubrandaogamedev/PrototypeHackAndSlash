@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[CreateAssetMenu(menuName = "Game/Character/Movement")]
+[CreateAssetMenu(menuName = "Game/Settings/Character/Movement")]
 public class CharacterMovementSettings : ScriptableObject
 {
     [SerializeField] private float movementSpeed = 1f;

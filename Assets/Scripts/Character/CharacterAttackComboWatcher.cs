@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CharacterAttackComboWatcher : MonoBehaviour
 {
-    public event Action OnAttackEnded = delegate {};
+    public event System.Action OnAttackEnded = delegate {};
 
     private void AttackEnded()
     {

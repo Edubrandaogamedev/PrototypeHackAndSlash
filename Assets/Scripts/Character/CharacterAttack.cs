@@ -8,18 +8,18 @@ public class CharacterAttack : MonoBehaviour
 {
     [SerializeField] private Weapon currentWeapon;
     
-    private CharacterAnimation characterAnim;
+    //private CharacterAnimation characterAnim;
     private bool canStartComboAttack => !currentWeapon.IsOnCombo;
     public event Action OnAttackStarted = delegate {};
     public event Action OnAttackEnded = delegate {};
     private void Awake()
     {
-        characterAnim = GetComponent<CharacterAnimation>();
+        //characterAnim = GetComponent<CharacterAnimation>();
         SetupCurrentWeapon();
     }
     private void UpdateAnimation(ComboSequenceData currentSquence)
     {
-        characterAnim.SetComboAttack(currentWeapon.CurrentComboSequenceId,currentSquence.AnimationMultiplier);
+        //characterAnim.SetComboAttack(currentWeapon.CurrentComboSequenceId,currentSquence.AnimationMultiplier);
     }
     private void SetupCurrentWeapon()
     {
@@ -62,8 +62,9 @@ public class CharacterAttack : MonoBehaviour
     private IEnumerator WaitForSequenceAnimationEnd(ComboSequenceData sequence)
     {
         var elapsedTime = sequence.TimeToTriggerNextSequence/ sequence.AnimationMultiplier;
-        var timeRemaning = characterAnim.GetCurrentAnimationLength() - elapsedTime;
-        yield return new WaitForSeconds(timeRemaning);
+        //var timeRemaning = characterAnim.GetCurrentAnimationLength() - elapsedTime;
+        //yield return new WaitForSeconds(timeRemaning);
+        yield return null;
         EndAttack();
     }
 }

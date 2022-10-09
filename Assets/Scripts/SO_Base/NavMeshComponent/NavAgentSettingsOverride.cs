@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-[CreateAssetMenu(menuName = "Game/Character/NavMeshAgentOverride")]
+[CreateAssetMenu(menuName = "Game/Settings/Components/NavMeshAgentOverride")]
 public class NavAgentSettingsOverride : ScriptableObject
 {
     [SerializeField] private float speed = 3.5f;

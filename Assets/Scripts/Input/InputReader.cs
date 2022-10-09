@@ -9,7 +9,7 @@ public class InputReader : ScriptableObject, GameInput.IGameplayActions
 {
     private GameInput _gameInput;
     public event Action<Vector2> MoveEvent = delegate { };
-    public event Action AttackEvent = delegate { };
+    public event System.Action AttackEvent = delegate { };
     private void OnEnable()
     {
         if (_gameInput == null)

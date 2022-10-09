@@ -6,6 +6,6 @@ using UnityEngine;
 public interface ITakeDamage
 {
     void TakeDamage(Weapon hitBy);
-    event Action OnReceiveHit;
+    event System.Action OnReceiveHit;
     
 }
