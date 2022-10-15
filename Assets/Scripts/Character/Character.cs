@@ -4,14 +4,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Character : MonoBehaviour
+public abstract class Character : MonoBehaviour
 {
     [SerializeField] private CharacterSettings settings;
     private Animator animator;
     private NavMeshAgent agent;
     private CharacterAction[] actions;
+    private CharacterActionManager _characterActionCharacterActionManager;
     protected CharacterAction currentAction;
-    
+    protected CharacterActionManager ActionManager
+    {
+        get
+        {
+            if (_characterActionCharacterActionManager != null) return _characterActionCharacterActionManager;
+            _characterActionCharacterActionManager = new CharacterActionManager(actions);
+            return _characterActionCharacterActionManager;
+        }
+    }
     public Animator Animator
     {
         get
@@ -30,15 +39,45 @@ public class Character : MonoBehaviour
             return agent;
         }
     }
+    protected  abstract void OnActionProcessed(CharacterAction processedAction);
+    protected abstract void OnActionEnded(CharacterAction endedAction);
+    protected virtual void OnEnable()
+    {
+       InitializeCharacter();
+    }
+    protected virtual void OnDisable()
+    {
+        DisposeEvents();
+    }
+    protected virtual void Update()
+    {
+        currentAction?.OnUpdate();
+    }
+    private void InitializeCharacter()
+    {
+        SetupActions();
+        SetupComponentsOverride();
+        _characterActionCharacterActionManager = new CharacterActionManager(actions);
+    }
     private void SetupActions()
     {
         var count = settings.ScriptableActions.Length;
         actions = new CharacterAction[count];
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             var scriptableAction = settings.ScriptableActions[i];
             actions[i] = scriptableAction.GetAction;
             actions[i].Initialize(this,settings.GetSettingForAction(scriptableAction));
+            actions[i].OnActionProcessedEvent += OnActionProcessed;
+            actions[i].OnActionEndedEvent += OnActionEnded;
+        }
+    }
+    private void DisposeEvents()
+    {
+        foreach (var action in actions)
+        {
+            action.OnActionProcessedEvent -= OnActionProcessed;
+            action.OnActionEndedEvent -= OnActionEnded;
         }
     }
     private void SetupComponentsOverride()
@@ -47,42 +86,23 @@ public class Character : MonoBehaviour
         Agent.angularSpeed = settings.AgentOverride.AngularSpeed;
         Agent.acceleration = settings.AgentOverride.Acceleration;
     }
-    protected virtual void Awake()
+}
+
+public static class AnimatorLayerController
+{
+    public static IEnumerator LerpLayerWeigth(this Animator original, string layerName,float targetWeigth, float duration, float lerpSpeed = 1)
     {
-        SetupActions();
-        SetupComponentsOverride();
-    }
-    protected virtual void Update()
-    {
-        currentAction?.OnUpdate();
-    }
-    protected void SetCurrentAction(ActionKeys actionToSet)
-    {
-        if (currentAction?.Key == actionToSet) return;
-        currentAction = GetActionByKey(actionToSet);
-    }
-    protected void ProcessAction()
-    {
-        currentAction.ProcessAction();    
-    }
-    protected void CancelCurrentAction()
-    {
-        currentAction.CancelAction();
-    }
-    protected void CancelAllActions()
-    {
-        foreach (var action in actions)
+        var layerIndex = original.GetLayerIndex(layerName);
+        var startWeight = original.GetLayerWeight(layerIndex);
+        var currentWeight = startWeight;
+        float timeElapsed = 0;
+        while (currentWeight > 0)
         {
-            action.CancelAction();
+            currentWeight = Mathf.Lerp(1, 0, timeElapsed / duration);
+            timeElapsed += Time.deltaTime*lerpSpeed;
+            original.SetLayerWeight(layerIndex, currentWeight);
+            yield return null;
         }
-    }
-    private CharacterAction GetActionByKey(ActionKeys key)
-    {
-        foreach (var action in actions)
-        {
-            if (action.Key == key)
-                return action;
-        }
-        return null;
+        original.SetLayerWeight(layerIndex, targetWeigth);
     }
 }

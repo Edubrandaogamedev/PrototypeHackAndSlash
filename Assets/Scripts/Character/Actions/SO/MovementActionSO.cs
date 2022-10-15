@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "Movement Action", menuName = "Game/Character/Actions/MovementAction")]
 public class MovementActionSO : CharacterActionSO<MovementAction>
@@ -32,12 +28,15 @@ public class MovementAction : CharacterAction
     }
     public override void ProcessAction()
     {
-            
+        OnActionProcessed();
     }
     public override void CancelAction()
     {
+        Debug.Log("CANCELING THE MOVEMENT ACTION");
+        inputValue = Vector3.zero;
+        animatorActionParameter.UpdateAnimator(0);
+        OnActionEnded();
     }
-
     public override void OnUpdate()
     {
         if (inputValue.magnitude <= actionSetting.ControllerInputThreshold)

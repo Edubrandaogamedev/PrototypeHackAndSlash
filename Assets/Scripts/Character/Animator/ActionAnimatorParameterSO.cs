@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class ActionAnimatorParameterSO : ScriptableObject
 {
-    [SerializeField] private ParameterType parameterType = default;
+    [SerializeField] protected ParameterType parameterType = default;
     [SerializeField] private string parameterName = default;
     private ActionAnimatorParameter animatorParameter;
     public enum ParameterType

@@ -45,14 +45,17 @@ public class Weapon : MonoBehaviour
     }
     public void EndCombo()
     {
+        Debug.Log("<color=blue> END COMBO </color>");
         IsOnCombo = false;
         currentComboSequence = default;
     }
     private void MoveToNextSequence()
     {
         nextComboTriggered = false;
-        currentComboSequenceId = CurrentComboSequenceId + 1;
+        currentComboSequenceId = currentComboSequenceId >= data.ComboSequence.Length? 1: CurrentComboSequenceId + 1;
         currentComboSequence = data.ComboSequence[CurrentComboSequenceId - 1];
+        Debug.Log("<color=red> THE NEXT SEQUENCE I MOVED WAS: </color>" + CurrentComboSequenceId);
+        //currentComboSequenceId = CurrentComboSequenceId + 1;
         OnSequenceStarted(currentComboSequence);
         StartCoroutine(CheckingImpact());
         StartCoroutine(WaitingForNextSequence());
@@ -61,14 +64,17 @@ public class Weapon : MonoBehaviour
     {
         var timeUntilNextSequence = currentComboSequence.TimeToTriggerNextSequence/ currentComboSequence.AnimationMultiplier;
         yield return new WaitForSeconds(timeUntilNextSequence);
+        Debug.Log("<color=orange> CURRENT SEQUENCE IS </color>:" + currentComboSequenceId);
         var comboLength = data.ComboSequence.Length;
-        if (nextComboTriggered && CurrentComboSequenceId < comboLength)
+        Debug.Log("<color=green> GOING TO NEXT COMBO? </color>" + (nextComboTriggered && CurrentComboSequenceId <= comboLength));
+        if (nextComboTriggered && CurrentComboSequenceId <= comboLength)
             MoveToNextSequence();
         else
             EndSequence();    
     }
     private void EndSequence()
     {
+        Debug.Log("END SEQUENCE");
         currentComboSequenceId = 0;
         nextComboTriggered = false;
         OnSequenceEnded(currentComboSequence);

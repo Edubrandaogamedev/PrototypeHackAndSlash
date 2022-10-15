@@ -8,8 +8,8 @@ using UnityEngine.InputSystem;
 public class InputReader : ScriptableObject, GameInput.IGameplayActions
 {
     private GameInput _gameInput;
-    public event Action<Vector2> MoveEvent = delegate { };
-    public event System.Action AttackEvent = delegate { };
+    public event Action<Vector3> MovementInputEvent = delegate{};
+    public event Action AttackEvent = delegate { };
     private void OnEnable()
     {
         if (_gameInput == null)
@@ -23,9 +23,10 @@ public class InputReader : ScriptableObject, GameInput.IGameplayActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        MoveEvent(context.ReadValue<Vector2>());
+        var ínputValue = context.ReadValue<Vector2>();
+        var input3DValue = new Vector3( ínputValue.x, 0, ínputValue.y);
+        MovementInputEvent(input3DValue);
     }
-
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.performed)

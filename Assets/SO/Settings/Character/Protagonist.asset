@@ -15,5 +15,6 @@ MonoBehaviour:
   agentOverride: {fileID: 11400000, guid: ca58a1a48c7fbc145896f7f45cca4db5, type: 2}
   scriptableActions:
   - {fileID: 11400000, guid: a3fe087dbe1b9be4dab6703a17e46f0c, type: 2}
+  - {fileID: 11400000, guid: e86b5d18f9dccd94882a45541175ccc0, type: 2}
   actionSettings:
   - {fileID: 11400000, guid: 7841f63a398b8d7489cdc4c291ea703b, type: 2}

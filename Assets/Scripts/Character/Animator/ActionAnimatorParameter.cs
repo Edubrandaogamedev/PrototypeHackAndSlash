@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ActionAnimatorParameter
@@ -12,13 +10,13 @@ public class ActionAnimatorParameter
     protected bool boolValue;
     protected float floatValue;
     protected int intValue;
-    
+
     public void Initialize(Animator characterAnimator)
     {
         _animator = characterAnimator;
         _parameterHash = Animator.StringToHash(animatorParameterSO.ParameterName);
     }
-    public void UpdateAnimator()
+    public virtual void UpdateAnimator()
     {
         SetParameter();
     }

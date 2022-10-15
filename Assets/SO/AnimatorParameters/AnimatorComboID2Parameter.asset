@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd0a311ac750772409a99810588ee62e, type: 3}
-  m_Name: ProtagonistMovement Action
+  m_Script: {fileID: 11500000, guid: d91ff0dc2a272704ebf0b2304903017f, type: 3}
+  m_Name: AnimatorComboID2Parameter
   m_EditorClassIdentifier: 
-  settingNeeded: 1
-  actionKey: 1
-  canBeOverridden: 1
-  animatorMovementParameterSO: {fileID: 11400000, guid: 22a4ce9a9fbb3ca45a76fcb4db208125,
-    type: 2}
+  parameterType: 3
+  parameterName: Combo2
+  id: 2

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 [CreateAssetMenu(fileName = "Character Settings", menuName = "Game/Settings/Character/Protagonist")]
@@ -18,16 +19,11 @@ public class CharacterSettings : Settings
     public ActionSetting GetSettingForAction(CharacterActionSO scriptableAction)
     {
         if (actionSettingDict.ContainsKey(scriptableAction))
-        {
             return actionSettingDict[scriptableAction];
-        }
-        foreach (var action in scriptableActions)
-        {
-            var setting = ActionSettings.FirstOrDefault(settings => settings.Key == action.Key);
-            if (setting == null) return null;
-            actionSettingDict.Add(action, setting);
-            return actionSettingDict[scriptableAction];
-        }
-        return null;
+        var setting = ActionSettings.FirstOrDefault(settings => settings.Key == scriptableAction.Key);
+        if (setting != null && setting.Key == ActionKeys.None)
+            return null;
+        actionSettingDict.Add(scriptableAction, setting);
+        return actionSettingDict[scriptableAction];
     }
 }

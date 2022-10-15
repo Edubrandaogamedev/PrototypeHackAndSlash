@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class CharacterActionSO : ScriptableObject
@@ -11,8 +8,12 @@ public abstract class CharacterActionSO : ScriptableObject
 #endif
     [Space] [Header("Gameplay")]
     [SerializeField] protected ActionKeys actionKey;
+    [Tooltip("If this action can be interrupt for another one set this to true. Example: The movement action can be instantly changed to another action")]
+    [SerializeField] protected bool canBeOverridden;
+    
     private CharacterAction action;
     public ActionKeys Key => actionKey;
+    public bool Overridden => canBeOverridden;
     public CharacterAction GetAction
     {
         get
@@ -34,7 +35,7 @@ public abstract class CharacterActionSO<T> : CharacterActionSO where T : Charact
 
 public enum ActionKeys
 {
-    None,
+    None = 0,
     MoveAction,
     AttackAction,
 }
